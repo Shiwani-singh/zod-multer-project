@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Users</title>
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/users.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <div class="users-container">
+    <h1 class="user-heading">Total Users: <%= users.length %></h1>
+
+    <div class="user-cards">
+      <% users.forEach(user => { %>
+        <div class="user-card">
+          <img src="/uploads/<%= user.photo %>" alt="User Image">
+          <h2><%= user.username %></h2>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</body>
+</html>

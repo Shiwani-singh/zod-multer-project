@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #9face6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .login-container input[type="email"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #5b6eff;
+            color: white;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-container button:hover {
+            background-color: #4a57cc;
+        }
+
+        .message {
+            color: red;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .signup-link {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .signup-link a {
+            color: #5b6eff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Fixed toggle styling */
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .toggle input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("partials/navbar") %>
+
+    <div class="login-container">
+        <h2>Login</h2>
+
+        <% if (error && error.length > 0) { %>
+            <div class="message">
+                <%= error[0] %>
+            </div>
+        <% } %>
+
+        <% if (success && success.length > 0) { %>
+            <div class="message" style="color:green">
+                <%= success[0] %>
+            </div>
+        <% } %>
+
+        <form action="/login" method="POST">
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Password" id="passwordInput" required />
+            <div class="toggle">
+                <input type="checkbox" id="togglePassword">
+                <label for="togglePassword">Show Password</label>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="signup-link">
+            Don't have an account? <a href="/signup">Signup here</a>
+        </div>
+    </div>
+
+    <script>
+        const toggle = document.getElementById('togglePassword');
+        const password = document.getElementById('passwordInput');
+        toggle.addEventListener('change', () => {
+            password.type = toggle.checked ? 'text' : 'password';
+        });
+    </script>
+</body>
+
+</html>

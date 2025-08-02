@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <%- include("partials/navbar") %>
+
+    <div class="form-container">
+        <form action="/signup" method="POST" enctype="multipart/form-data">
+            <h2>Signup</h2>
+
+            <% if (error) { %>
+                <p style="color:red; text-align:center;">
+                    <%= error %>
+                </p>
+                <% } %>
+
+                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="email" name="email" placeholder="Email" required>
+
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <div class="toggle">
+                        <input type="checkbox" id="togglePassword">
+                        <label for="togglePassword">Show Password</label>
+                    </div>
+
+                    <input type="file" name="photo" accept="image/*" required>
+
+                    <button type="submit">Signup</button>
+
+                    <% if (success && success.length> 0) { %>
+                        <p style="color: green; text-align: center;">
+                            <%= success %>
+                        </p>
+                        <% } %>
+
+                            <% if (error && error.length> 0) { %>
+                                <p style="color: red; text-align: center;">
+                                    <%= error %>
+                                </p>
+                                <% } %>
+
+        </form>
+    </div>
+
+    <script>
+        const toggle = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+        toggle.addEventListener('change', () => {
+            password.type = toggle.checked ? 'text' : 'password';
+        });
+    </script>
+</body>
+
+</html>
