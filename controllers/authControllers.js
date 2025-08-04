@@ -45,7 +45,7 @@ export const postSignup = async (req, res) => {
     });
 
     await user.save();
-    // console.log("User created:", user);
+    // console.log("User created", user);
 
     req.flash("success", "Signup successful!");
     res.redirect("/login");
