@@ -1,33 +1,37 @@
 import bcrypt from "bcrypt";
 import { z } from "zod";
 import User from "../models/User.js";
-import { ca } from "zod/locales";
+import { signupSchema, loginSchema } from "../shared/zodSchema.js";
 
-const userSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z
-    .string()
-    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+// const userSchema = z.object({
+//   username: z.string().min(3, "Username must be at least 3 characters"),
+//   email: z
+//     .string()
+//     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email address"),
+//   password: z.string().min(6, "Password must be at least 6 characters"),
+// });
 
-const loginSchema = z.object({
-  email: z
-    .string()
-    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "⚠ Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+// const loginSchema = z.object({
+//   email: z
+//     .string()
+//     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "⚠ Invalid email address"),
+//   password: z.string().min(6, "Password must be at least 6 characters"),
+// });
 
 export const getSignup = (req, res) => {
   res.render("signup");
 };
 
 export const postSignup = async (req, res) => {
-  const { username, email, password } = req.body;
-  const photo = req.file;
-
   try {
-    userSchema.parse({ username, email, password });
+    const { username, email, password } = req.body;
+    // const photo = req.file;
+    if (!req.file) {
+      req.flash("error", "Please upload a photo.");
+      return res.redirect("/signup");
+    }
+
+    signupSchema.safeParse({ username, email, password });
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -41,7 +45,7 @@ export const postSignup = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      photo: photo.filename,
+      photo: req.file.filename,
     });
 
     await user.save();
@@ -50,13 +54,13 @@ export const postSignup = async (req, res) => {
     req.flash("success", "Signup successful!");
     res.redirect("/login");
   } catch (err) {
-    if (err.errors) {
-      const message = err.errors.map((e) => e.message).join(", ");
+    if (err.issues) {
+      const message = err.issues.map((e) => e.message).join(", ");
       req.flash("error", message);
       return res.redirect("/signup");
     } else {
       console.error(err);
-      req.flash("error", "Server error");
+      req.flash("error", "Server error/Something Went Wrong");
       return res.redirect("/signup");
     }
   }
@@ -107,7 +111,6 @@ export const getUsers = async (req, res) => {
     const users = await User.find();
     res.render("users", { users });
     console.log(users.photo); // it should be just the filename, not a full path
-
   } catch (err) {
     console.error(err);
     req.flash("error", "Server error");

@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session & Flash
 app.use(session({
-  secret: process.env.SECRET_KEY,
+  secret: 'super-secret-key',
   resave: false,
   saveUninitialized: false,
 }));
