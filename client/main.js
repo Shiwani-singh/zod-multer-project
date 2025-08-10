@@ -10,7 +10,7 @@ form?.addEventListener('submit', (e) => {
   });
 
   const data = {
-    username: form.username.value,
+    name: form.name.value,
     email: form.email.value,
     password: form.password.value,
   };

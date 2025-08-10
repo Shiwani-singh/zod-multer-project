@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Error - <%= message %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .error-container {
+      text-align: center;
+      padding: 50px 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .error-code {
+      font-size: 72px;
+      color: #e74c3c;
+      margin: 0;
+    }
+    .error-message {
+      font-size: 24px;
+      color: #2c3e50;
+      margin: 20px 0;
+    }
+    .error-description {
+      color: #7f8c8d;
+      margin-bottom: 30px;
+    }
+    .back-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    .back-btn:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <%- include("partials/navbar") %>
+  
+  <div class="error-container">
+    <h1 class="error-code"><%= error.status %></h1>
+    <h2 class="error-message"><%= message %></h2>
+    <p class="error-description">
+      The page you're looking for doesn't exist or an error occurred.
+    </p>
+    <a href="/dashboard" class="back-btn">Go to Dashboard</a>
+    <a href="/signup" class="back-btn" style="margin-left: 15px;">Go to Signup</a>
+  </div>
+</body>
+</html>

@@ -22,8 +22,9 @@
                     </p>
                     <% } %>
 
-                        <input type="text" name="username" id="username" placeholder="Username">
+                        <input type="text" name="name" id="name" placeholder="Name">
                         <input type="email" name="email" id="email" placeholder="Email">
+                        <input type="tel" name="phone" id="phone" placeholder="Phone Number">
                         <input type="password" name="password" id="password" placeholder="Password">
 
                         <div class="toggle">
@@ -31,7 +32,7 @@
                             <label for="togglePassword">Show Password</label>
                         </div>
 
-                        <input type="file"name="photo" id="photo" accept="image/*">
+                        <input type="file" name="photo" id="photo" accept="image/jpeg,image/png" onchange="validatePhoto(this)">
 
                         <button type="submit">Signup</button>
 
@@ -55,6 +56,47 @@
             const password = document.getElementById('password');
             toggle.addEventListener('change', () => {
                 password.type = toggle.checked ? 'text' : 'password';
+            });
+
+            // Photo validation
+            function validatePhoto(input) {
+                const file = input.files[0];
+                if (file) {
+                    // Check file size (5MB = 5 * 1024 * 1024 bytes)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('Photo size must be less than 5MB');
+                        input.value = '';
+                        return false;
+                    }
+                    
+                    // Check file type
+                    const allowedTypes = ['image/jpeg', 'image/png'];
+                    if (!allowedTypes.includes(file.type)) {
+                        alert('Only JPEG and PNG files are allowed');
+                        input.value = '';
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            // Check for success message from URL parameter (e.g., after account deletion)
+            window.addEventListener('DOMContentLoaded', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const message = urlParams.get('message');
+                if (message) {
+                    // Create and display success message
+                    const successDiv = document.createElement('p');
+                    successDiv.style.cssText = 'color: green; text-align: center; margin: 10px 0;';
+                    successDiv.textContent = message;
+                    
+                    // Insert after the form title
+                    const title = document.querySelector('h2');
+                    title.parentNode.insertBefore(successDiv, title.nextSibling);
+                    
+                    // Remove the message from URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
             });
         </script>
 

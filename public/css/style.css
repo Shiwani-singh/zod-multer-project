@@ -26,6 +26,7 @@ form h2 {
 
 input[type="text"],
 input[type="email"],
+input[type="tel"],
 input[type="file"] {
   width: 100%;
   padding: 0.7rem;
@@ -37,6 +38,7 @@ input[type="file"] {
 
 input[type="text"]:hover,
 input[type="email"]:hover,
+input[type="tel"]:hover,
 input[type="file"]:hover {
   box-shadow: 0 0 5px rgba(100, 100, 255, 0.5);
 }

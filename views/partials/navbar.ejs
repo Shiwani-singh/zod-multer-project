@@ -5,9 +5,14 @@
       <a href="/" class="logo-text">MyApp</a>
     </div>
     <ul class="navbar-links">
-      <li><a href="/signup">Signup</a></li>
-      <li><a href="/login">Login</a></li>
-      <li><a href="/users">Users</a></li>
+      <% if (!user) { %>
+        <li><a href="/signup">Signup</a></li>
+        <li><a href="/login">Login</a></li>
+      <% } else { %>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/logout" class="logout-btn">Logout</a></li>
+      <% } %>
     </ul>
   </div>
 </nav>

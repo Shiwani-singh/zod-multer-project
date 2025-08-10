@@ -2,6 +2,9 @@ import bcrypt from "bcrypt";
 import { z } from "zod";
 import User from "../models/User.js";
 import { signupSchema, loginSchema } from "../shared/zodSchema.js";
+import { id } from "zod/locales";
+
+
 
 // const userSchema = z.object({
 //   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -24,14 +27,16 @@ export const getSignup = (req, res) => {
 
 export const postSignup = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    // const photo = req.file;
-    if (!req.file) {
-      req.flash("error", "Please upload a photo.");
+    const { name, email, phone, password } = req.body;
+    const photo = req.file ? req.file.filename : null;
+
+    // Validate input using Zod schema
+    const validationResult = signupSchema.safeParse({ name, email, phone, password });
+    if (!validationResult.success) {
+      const errorMessages = validationResult.error.issues.map(err => err.message).join(", ");
+      req.flash("error", errorMessages);
       return res.redirect("/signup");
     }
-
-    signupSchema.safeParse({ username, email, password });
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -42,10 +47,11 @@ export const postSignup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User({
-      username,
+      name,
       email,
+      phone,
       password: hashedPassword,
-      photo: req.file.filename,
+      photo: photo,
     });
 
     await user.save();
@@ -76,9 +82,9 @@ export const postLogin = async (req, res) => {
 
     if (!result.success) {
       const errorMessages = result.error.issues.map((err) => {
-        if (err.path[0] === "email") return "⚠ Invalid email address.";
-        if (err.path[0] === "password") return "⚠ Password is too short.";
-        return "⚠ Please fill the valid email or password.";
+        if (err.path[0] === "email") return "Invalid email address.";
+        if (err.path[0] === "password") return "Password is too short.";
+        return "Please fill the valid email or password.";
       });
       req.flash("error", errorMessages);
       return res.redirect("/login");
@@ -98,7 +104,17 @@ export const postLogin = async (req, res) => {
       return res.redirect("/login");
     }
 
-    res.redirect("/users");
+    req.session.user = {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      phone: user.phone
+    };
+
+    res.redirect("/dashboard");
+    console.log("User logged in:", user.name);
+    req.flash("success", "Login successful!");
+
   } catch (err) {
     console.error(err);
     req.flash("error", "Server error");
@@ -109,11 +125,28 @@ export const postLogin = async (req, res) => {
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find();
-    res.render("users", { users });
-    console.log(users.photo); // it should be just the filename, not a full path
+    res.render("users", { 
+      users, 
+      currentUser: req.session.user, // renamed to avoid confusion
+      id: req.session.user?.id // optional chaining to avoid errors if user is not logged in
+    });
   } catch (err) {
     console.error(err);
     req.flash("error", "Server error");
     res.redirect("/login");
   }
+};  
+
+export const logout = (req, res) => {
+  // Destroy the session in MongoDB
+ req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+      return res.send("Error logging out");
+    }
+    res.clearCookie("connect.sid", { path: "/" });
+    console.log("User logged out from post logout");
+    res.redirect("/login");
+  });
 };
+

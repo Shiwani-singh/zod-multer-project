@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - All Users</title>
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h1>Dashboard</h1>
+      <p>Welcome, <%= currentUser.name %>!</p>
+      <p>Total Users: <%= pagination.totalUsers %></p>
+    </div>
+
+    <!-- Search and Sort Controls -->
+    <div class="controls">
+      <form method="GET" action="/dashboard" class="search-form">
+        <input 
+          type="text" 
+          name="search" 
+          placeholder="Search by name, email, or phone..." 
+          value="<%= search %>"
+          class="search-input"
+        >
+        <select name="sortBy" class="sort-select">
+          <option value="name" <%= sortBy === 'name' ? 'selected' : '' %>>Sort by Name</option>
+          <option value="email" <%= sortBy === 'email' ? 'selected' : '' %>>Sort by Email</option>
+          <option value="phone" <%= sortBy === 'phone' ? 'selected' : '' %>>Sort by Phone</option>
+        </select>
+        <select name="sortOrder" class="sort-select">
+          <option value="asc" <%= sortOrder === 'asc' ? 'selected' : '' %>>Ascending</option>
+          <option value="desc" <%= sortOrder === 'desc' ? 'selected' : '' %>>Descending</option>
+        </select>
+        <button type="submit" class="search-btn">Search & Sort</button>
+      </form>
+    </div>
+
+    <!-- User Cards -->
+    <div class="user-cards">
+      <% if (users.length === 0) { %>
+        <div class="no-users">
+          <p>No users found matching your search criteria.</p>
+        </div>
+      <% } else { %>
+        <% users.forEach(user => { %>
+          <div class="user-card">
+            <% if (user.photo) { %>
+              <img src="/uploads/<%= user.photo %>" alt="<%= user.name %>'s photo" class="user-photo">
+            <% } else { %>
+              <div class="no-photo">No Photo</div>
+            <% } %>
+            <div class="user-info">
+              <h3 class="user-name"><%= user.name %></h3>
+              <p class="user-email"><%= user.email %></p>
+              <p class="user-phone"><%= user.phone %></p>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <!-- Pagination -->
+    <% if (pagination.totalPages > 1) { %>
+      <div class="pagination">
+        <% if (pagination.hasPrevPage) { %>
+          <a href="/dashboard?page=<%= pagination.currentPage - 1 %>&search=<%= search %>&sortBy=<%= sortBy %>&sortOrder=<%= sortOrder %>" class="page-link">Previous</a>
+        <% } %>
+        
+        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+          <% if (i === pagination.currentPage) { %>
+            <span class="page-link current"><%= i %></span>
+          <% } else { %>
+            <a href="/dashboard?page=<%= i %>&search=<%= search %>&sortBy=<%= sortBy %>&sortOrder=<%= sortOrder %>" class="page-link"><%= i %></a>
+          <% } %>
+        <% } %>
+        
+        <% if (pagination.hasNextPage) { %>
+          <a href="/dashboard?page=<%= pagination.currentPage + 1 %>&search=<%= search %>&sortBy=<%= sortBy %>&sortOrder=<%= sortOrder %>" class="page-link">Next</a>
+        <% } %>
+      </div>
+    <% } %>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <a href="/profile" class="action-btn profile-btn">My Profile</a>
+      <a href="/logout" class="action-btn logout-btn">Logout</a>
+    </div>
+  </div>
+</body>
+</html>
