@@ -10,10 +10,8 @@ export const getDashboard = async (req, res) => {
     const sortBy = req.query.sortBy || "name";
     const sortOrder = req.query.sortOrder || "asc";
 
-    // Calculate skip value for pagination
     const skip = (page - 1) * limit;
 
-    // Build search query (case-insensitive, partial match)
     let searchQuery = {};
     if (search) {
       searchQuery = {
@@ -25,15 +23,12 @@ export const getDashboard = async (req, res) => {
       };
     }
 
-    // Build sort object
     const sortObject = {};
     sortObject[sortBy] = sortOrder === 'desc' ? -1 : 1;
 
-    // Get total count for pagination
     const totalUsers = await User.countDocuments(searchQuery);
     const totalPages = Math.ceil(totalUsers / limit);
 
-    // Get users with pagination, search, and sorting
     const users = await User.find(searchQuery)
       .sort(sortObject)
       .skip(skip)
@@ -63,7 +58,6 @@ export const getDashboard = async (req, res) => {
   }
 };
 
-// Profile page - show current user's profile
 export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.session.user.id).select('-password');
@@ -85,12 +79,10 @@ export const getProfile = async (req, res) => {
   }
 };
 
-// Update profile (name, email, and phone)
 export const updateProfile = async (req, res) => {
   try {
     const { name, email, phone } = req.body;
 
-    // Validate input using Zod schema
     const validationResult = profileUpdateSchema.safeParse({ name, email, phone });
     if (!validationResult.success) {
       const errorMessages = validationResult.error.issues.map(err => err.message).join(", ");
@@ -98,7 +90,7 @@ export const updateProfile = async (req, res) => {
       return res.redirect("/profile");
     }
 
-    // Check if email is already taken by another user
+
     const existingUser = await User.findOne({ 
       email, 
       _id: { $ne: req.session.user.id } 
@@ -109,7 +101,6 @@ export const updateProfile = async (req, res) => {
       return res.redirect("/profile");
     }
 
-    // Update user profile
     const updatedUser = await User.findByIdAndUpdate(
       req.session.user.id,
       { name, email, phone },
@@ -121,7 +112,6 @@ export const updateProfile = async (req, res) => {
       return res.redirect("/profile");
     }
 
-    // Update session with new user data
     req.session.user = {
       id: updatedUser._id.toString(),
       name: updatedUser.name,
@@ -141,7 +131,6 @@ export const updateProfile = async (req, res) => {
 
 export const deleteAccount = async (req, res) => {
   try {
-    // Delete the user from database
     const deletedUser = await User.findByIdAndDelete(req.session.user.id);
     // console.log(req.session.user.id, "deletedUser")
     
@@ -150,20 +139,14 @@ export const deleteAccount = async (req, res) => {
       return res.redirect("/profile");
     }
 
-    // Destroy session and redirect to signup
     req.session.destroy((err) => {
       if (err) {
         console.error("Session destruction error:", err);
-        // Even if session destruction fails, continue with redirect
       }
       
-      // Clear the session cookie
       res.clearCookie("connect.sid", { path: "/" });
       
-      // Set success message in a way that doesn't depend on session
       const successMessage = "Account deleted successfully";
-      
-      // Redirect to signup with success message
       res.redirect(`/signup?message=${encodeURIComponent(successMessage)}`);
     });
 

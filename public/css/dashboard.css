@@ -1,4 +1,3 @@
-/* Dashboard Styles */
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -24,7 +23,6 @@
   margin: 5px 0;
 }
 
-/* Search and Sort Controls */
 .controls {
   margin-bottom: 30px;
   padding: 20px;
@@ -71,7 +69,6 @@
   background-color: #0056b3;
 }
 
-/* User Cards */
 .user-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -146,7 +143,6 @@
   font-style: italic;
 }
 
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -173,7 +169,6 @@
   border-color: #007bff;
 }
 
-/* Quick Actions */
 .quick-actions {
   text-align: center;
   padding: 20px;

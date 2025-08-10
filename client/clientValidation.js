@@ -1,4 +1,3 @@
-// import { z } from "zod";
 import { signupSchema, loginSchema } from "../shared/zodSchema.js";
 
 const form = document.querySelector("form");
@@ -17,7 +16,6 @@ form.addEventListener("submit", (e) => {
   let result;
 
   if (formType === "signup") {
-    // Validate text fields
     result = signupSchema.safeParse(formData);
 
     if (!result.success) {
@@ -25,8 +23,6 @@ form.addEventListener("submit", (e) => {
       alert(errors.join("\n"));
       return;
     }
-
-    // Validate image file
     const fileInput = document.querySelector("#photo");
     const file = fileInput?.files[0];
 
@@ -48,7 +44,6 @@ form.addEventListener("submit", (e) => {
     }
   }
 
-  // ✅ Everything passed
   form.submit();
 });
 

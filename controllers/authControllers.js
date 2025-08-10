@@ -1,25 +1,6 @@
 import bcrypt from "bcrypt";
-import { z } from "zod";
 import User from "../models/User.js";
 import { signupSchema, loginSchema } from "../shared/zodSchema.js";
-import { id } from "zod/locales";
-
-
-
-// const userSchema = z.object({
-//   username: z.string().min(3, "Username must be at least 3 characters"),
-//   email: z
-//     .string()
-//     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email address"),
-//   password: z.string().min(6, "Password must be at least 6 characters"),
-// });
-
-// const loginSchema = z.object({
-//   email: z
-//     .string()
-//     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "⚠ Invalid email address"),
-//   password: z.string().min(6, "Password must be at least 6 characters"),
-// });
 
 export const getSignup = (req, res) => {
   res.render("signup");
@@ -30,7 +11,6 @@ export const postSignup = async (req, res) => {
     const { name, email, phone, password } = req.body;
     const photo = req.file ? req.file.filename : null;
 
-    // Validate input using Zod schema
     const validationResult = signupSchema.safeParse({ name, email, phone, password });
     if (!validationResult.success) {
       const errorMessages = validationResult.error.issues.map(err => err.message).join(", ");
@@ -55,7 +35,6 @@ export const postSignup = async (req, res) => {
     });
 
     await user.save();
-    // console.log("User created", user);
 
     req.flash("success", "Signup successful!");
     res.redirect("/login");
@@ -127,8 +106,8 @@ export const getUsers = async (req, res) => {
     const users = await User.find();
     res.render("users", { 
       users, 
-      currentUser: req.session.user, // renamed to avoid confusion
-      id: req.session.user?.id // optional chaining to avoid errors if user is not logged in
+      currentUser: req.session.user, 
+      id: req.session.user?.id
     });
   } catch (err) {
     console.error(err);
@@ -138,7 +117,6 @@ export const getUsers = async (req, res) => {
 };  
 
 export const logout = (req, res) => {
-  // Destroy the session in MongoDB
  req.session.destroy((err) => {
     if (err) {
       console.log(err);
