@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session & Flash
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key', // use environment variable or fallback
+  secret: process.env.SESSION_SECRET || 'your-secret-key', 
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
